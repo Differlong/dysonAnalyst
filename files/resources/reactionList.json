@@ -1,0 +1,8 @@
+[
+  {
+    "rawMaterial": {"铁矿":1 },
+    "product": {"铁块": 1},
+    "time": 1,
+    "device": "熔炉"
+  }
+]
