@@ -1,6 +1,9 @@
 from material import Material
 
 
+# 继承是对的。但是设备是固定的，需要的就是那个东西。
+# 需要一个工厂函数来生产。
+# 那就还是配置式的，代码里面没有参数。
 class Device(Material):
     speed_para = 1
 

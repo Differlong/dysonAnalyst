@@ -1,5 +1,14 @@
 [
-  "铁矿",
-  "铁块",
-  "熔炉"
+  {
+    "name": "铁矿石",
+    "type": "material"
+  },
+  {
+    "name": "铁块",
+    "type": "material"
+  },
+  {
+    "name": "熔炉",
+    "type": "device"
+  }
 ]

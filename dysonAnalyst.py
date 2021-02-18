@@ -1,5 +1,6 @@
-import json
 from icecream import ic
+import utils
+from material import Material
 
 
 # ic.disable()
@@ -16,21 +17,33 @@ def prescription_writer(func):
 
 class DysonAnalyst(object):
     def __init__(self):
+        self.material_list = []
         pass
 
     def read_material_list(self, config_file="./files/resources/materialList.json"):
-        pass
+        material_list = utils.read_from_json(config_file)
+        for material in material_list:
+            self.material_list.append(Material(material))
 
-    def read_reaction_list(self, config_file="./files/resources/reactionList.json"):
-        pass
-
-    def start(self):
-        self.read_material_list()
-        self.read_reaction_list()
+        ic(self.material_list)
 
 
-    def manage(self):
-        self.start()
+def read_reaction_list(self, config_file="./files/resources/reactionList.json"):
+    reaction_list = utils.read_from_json(config_file)
+
+    ic(reaction_list)
+
+    pass
+
+
+def start(self):
+    self.read_material_list()
+    self.read_reaction_list()
+
+
+def manage(self):
+    self.start()
+
 
 if __name__ == "__main__":
     analyst = DysonAnalyst()
