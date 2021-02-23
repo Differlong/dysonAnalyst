@@ -1,8 +1,9 @@
 [
   {
-    "rawMaterial": {"铁矿":1 },
+    "id": 1,
+    "rawMaterial": {"铁矿石":1 },
     "product": {"铁块": 1},
     "time": 1,
-    "device": "熔炉"
+    "device": "furnace"
   }
 ]

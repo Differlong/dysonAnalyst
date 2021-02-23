@@ -1,14 +1,20 @@
 [
   {
     "name": "铁矿石",
-    "type": "material"
+    "enName": "",
+    "type": "material",
+    "final": true
   },
   {
     "name": "铁块",
-    "type": "material"
+    "enName": "",
+    "type": "material",
+    "final": false
   },
   {
     "name": "熔炉",
-    "type": "device"
+    "enName": "",
+    "type": "device-furnace",
+    "final": false
   }
 ]
