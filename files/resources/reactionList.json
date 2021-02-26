@@ -5,5 +5,12 @@
     "product": {"铁块": 1},
     "time": 1,
     "device": "furnace"
+  },
+  {
+    "id": 2,
+    "rawMaterial": { },
+    "product": {"铁矿石": 4},
+    "time": 1,
+    "device": "furnace"
   }
 ]
