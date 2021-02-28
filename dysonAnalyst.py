@@ -5,7 +5,7 @@ from config import Config
 from factory import MaterialFactory, ReactionFactory
 from globalWatcher import GW
 from reaction import Reaction
-from scipy.optimize import minimize, OptimizeResult
+from scipy.optimize import linprog
 import numpy as np
 
 
@@ -57,54 +57,48 @@ class DysonAnalyst(object):
         ic(material_set)
         ic(focus_material_set)
         # 开始列方程计算。
-
-        e = 1e-8
-
+        #
+        # e = 1e-8
+        #
         m_list = list(material_set)
         m_dict = {m_list[i]: i for i in range(len(m_list))}
         r_list = list(reaction_set)
 
         print(m_list, m_dict, r_list)
 
-        x_list = np.zeros(len(m_list) + len(r_list))
-
-        purpose_function = lambda x: sum(x[:len(m_list)])
-        cons = list()
-
-        def gen_func(item):
-            def __wrapper__(x: np.array):
-                result = 0
-                if item.name == material.name:
-                    result += speed
-                else:
-                    result -= x[m_dict[item]]
-                for j in range(len(r_list)):
-                    r = r_list[j]
-                    if item in r.from_materials:
-                        result -= x[len(m_list) + j] * r.from_materials[item]
-                    if item in r.to_materials:
-                        result += x[len(m_list) + j] * r.to_materials[item]
-                return result
-            cons.append({"type": "eq", "fun": __wrapper__})
-
-        # 约束条件
-        for item in m_list:
-            gen_func(item)
-
-        for i in range(len(m_list) + len(r_list)):
-            cons.append({"type": "ineq", "fun": lambda x: x[i]})
-        # for _ in range(100):
-        #     x_list += 1
-        #     print(x_list)
-        #     for c in cons:
-        #         print(c["fun"](x_list))
-
-        res: OptimizeResult = minimize(purpose_function, x_list, method="SLSQP", bounds=[(0, None)] * (len(m_list) + len(r_list)), constraints=cons)
+        c = np.array([0 if i >= len(m_list) else 1 for i in range(len(m_list) + len(r_list))])
+        ic(c)
+        bounds = [(0, None) for i in range(len(m_list) + len(r_list))]
+        a = list()
+        b = list()
+        for i in range(len(m_list)):
+            item = m_list[i]
+            arg_list = [0 for i in range(len(m_list) + len(r_list))]
+            arg_list[i] = -1
+            for j in range(len(r_list)):
+                arg = 0
+                reaction = r_list[j]
+                if item in reaction.from_materials:
+                    arg -= reaction.from_materials[item]
+                if item in reaction.to_materials:
+                    arg += reaction.to_materials[item]
+                arg_list[len(m_list) + j] = arg
+            a.append(arg_list)
+            if item == material:
+                b.append(speed)
+            else:
+                b.append(0)
+        print(c)
+        print(a)
+        print(b)
+        print(bounds)
+        res= linprog(c, A_eq=a, b_eq=b, bounds=bounds,options={"disp": True})
+        print(res)
         print("最小值： ", res.fun)
         print("最优解： ", res.x)
         for i in range(len(m_list) + len(r_list)):
             if i < len(m_list):
-                print(m_list[i], int(res.x[i]))
+                print(m_list[i], int(res.x[i] + 0.49999))
             else:
                 print(r_list[i-len(m_list)], int(res.x[i]))
         print('迭代终止是否成功：', res.success)
@@ -113,4 +107,4 @@ class DysonAnalyst(object):
 
 if __name__ == "__main__":
     analyst = DysonAnalyst()
-    analyst.calculate("铁块", 72)
+    analyst.calculate("铁块", 60)
