@@ -98,9 +98,9 @@ class DysonAnalyst(object):
         print("最优解： ", res.x)
         for i in range(len(m_list) + len(r_list)):
             if i < len(m_list):
-                print(m_list[i], int(res.x[i] + 0.49999))
+                print(m_list[i], round(res.x[i]))
             else:
-                print(r_list[i-len(m_list)], int(res.x[i]))
+                print(r_list[i-len(m_list)], round(res.x[i]))
         print('迭代终止是否成功：', res.success)
         print('迭代终止原因：', res.message)
 
