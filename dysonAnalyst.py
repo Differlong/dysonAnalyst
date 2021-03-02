@@ -31,10 +31,10 @@ class DysonAnalyst(object):
             self.reaction_list.append(r)
 
     def calculate(self, material, speed, reaction_dict=None):
-        # 需要考虑的因素有点多，涉及到多种来源的。选择来源之后，还有附属来源。乱七八糟的。看别人怎么写的吧。
-        # 不考虑附属来源，单纯处理多产出的问题。
-        # 自己用，不管了，算60次，然后求平均值。
-        # 还是采用计算最优化的方式来做，这个靠谱一点。
+        # 需要考虑的因素有点多，涉及到多种来源的。选择来源之后，还有附属来源。乱七八糟的。3种方案如下：
+        # 1. 不考虑附属来源，单纯处理多产出的问题。
+        # 2. 算60次，然后求平均值。
+        # 3. 还是采用计算最优化的方式来做，这个靠谱一点。
         reaction_dict = dict() if not reaction_dict else reaction_dict
         material: Material = GW.get_material(material) if type(material) == str else material
 
@@ -56,10 +56,8 @@ class DysonAnalyst(object):
         ic(reaction_set)
         ic(material_set)
         ic(focus_material_set)
-        # 开始列方程计算。
-        #
-        # e = 1e-8
-        #
+
+        # 建立最优化模型，目标函数和约束条件。
         m_list = list(material_set)
         m_dict = {m_list[i]: i for i in range(len(m_list))}
         r_list = list(reaction_set)
@@ -68,7 +66,7 @@ class DysonAnalyst(object):
 
         c = np.array([0 if i >= len(m_list) else 1 for i in range(len(m_list) + len(r_list))])
         ic(c)
-        bounds = [(0, None) for i in range(len(m_list) + len(r_list))]
+        bounds = [(0, None) for _ in range(len(m_list) + len(r_list))]
         a = list()
         b = list()
         for i in range(len(m_list)):
@@ -92,7 +90,7 @@ class DysonAnalyst(object):
         print(a)
         print(b)
         print(bounds)
-        res= linprog(c, A_eq=a, b_eq=b, bounds=bounds,options={"disp": True})
+        res = linprog(c, A_eq=a, b_eq=b, bounds=bounds, options={"disp": True})
         print(res)
         print("最小值： ", res.fun)
         print("最优解： ", res.x)
@@ -100,7 +98,7 @@ class DysonAnalyst(object):
             if i < len(m_list):
                 print(m_list[i], round(res.x[i]))
             else:
-                print(r_list[i-len(m_list)], round(res.x[i]))
+                print(r_list[i - len(m_list)], round(res.x[i]))
         print('迭代终止是否成功：', res.success)
         print('迭代终止原因：', res.message)
 
